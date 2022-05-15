@@ -1,2 +1,2 @@
 # NATLAB
-Simple programming language allows Matrix-manipulation, written in C
+Programming language allows Matrix-manipulation, written in C
