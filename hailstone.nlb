@@ -1,0 +1,30 @@
+# Hailstones sequences are ones that seem to always return to 1. 
+# The number is halved if even, and if odd then the next becomes 3*n+1.
+# 11 gets the hailstone sequence, containing ??? numbers.
+
+BEGIN {
+
+   SET $T := 11 ;
+   SET $A := $T ;
+   SET $C := 1 ;
+
+   LOOP $L 2 {
+      SET $D := $A 2 B-MODULUS ;
+
+      IF $D 0 C-SAME {
+         SET $A := $A 2 B-DIV ;
+         SET $C := $C 1 B-ADD ;
+         SET $L := 1 ;
+      }
+      ELSE {
+         SET $A := $A 3 B-TIMES 1 B-ADD ;
+         SET $C := $C 1 B-ADD ;
+         SET $L := 1 ;
+      }
+      IF $A 1 C-SAME {
+         SET $L := 2 ;
+      }
+   }
+   
+   PRINT := $T "gets" "the" "hailstone" "sequence," "containing" $C "numbers." ;
+}
