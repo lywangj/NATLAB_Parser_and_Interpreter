@@ -1,0 +1,15 @@
+# notes must be ignored
+# notes must be ignored
+BEGIN {
+   READ "lblock.arr" $A
+   ONES 4 4 $B
+   LOOP $I 2 {
+      SET $C := $B U-NOT 3 B-ADD $A B-TIMES ;
+      LOOP $J 2 {
+         SET $D := $C $B B-TIMES ;
+      }
+      PRINT "TEST:"
+      PRINT $D
+      SET $A := $D ;
+   }
+}
