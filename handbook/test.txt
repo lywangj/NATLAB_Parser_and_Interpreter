@@ -1,0 +1,250 @@
+Four testing groups:
+
+1).   unit testing for general functions             // test_func()
+2).   white-box testing for stack functions          // test_stack()
+3).   white-box testing for programming functions    // test_prog() & test_prog_ext()
+4).   black-box testing from testers                 // test_file()
+
+5).   Error code generated while compiling input file
+
+
+Overall, each functions return true/false result. 
+While compiling an input file, once an error has been found, error code will be generated.
+(besides, test functions will only return true/false, error code has been turned off)
+
+As a low-level function finds an error, it will return false through its all high-level functions as the path in grammar.
+For example,
+valid_Int("0a")==false -> tack_push(ts_s, "0a")==false -> Polish(p)== false -> PolishList(p)== false 
+-> Set(p)==false -> ... -> Prog(p)==false
+
+Therefore, it can be systematically tested from low-level to high-level functions.
+
+
+1).   unit testing for general functions
+
+   assert(valid_Int("0")==true);         // valid integer
+   assert(valid_Int("$0")==false);       // invalid integer
+   assert(valid_Var("$A")==true);        // valid variable
+   assert(valid_Var("$Aa")==false);      // invalid variable
+
+
+2).   white-box testing for stack functions
+
+   assert(stack_push(ts_s, "1"));               // valid integer
+   assert(stack_push(ts_s, "$A"));              // valid variable
+   assert(stack_pop(ts_s, g1));                 // valid pop
+   assert(stack_find(ts_s, "$X")==false);       // connot find $X
+   assert(stack_find(ts_s, "$A"));              // find $A in stack
+
+
+3).   white-box testing for programming functions
+
+Coders can generate input sequences for testing.
+if any error is found from an input sequence, the tested functions and its higher-level functions will return false.
+In this way, different ways (e.g. typo, invalid settings, unexpected vabiables) should be caught, 
+making sure all programming functions will return FALSE correctly.
+
+Low-level:
+   test_input("1", ts_prog->wds); Integer(ts_prog)==true;     // valid integer
+   test_input(".", ts_prog->wds); Integer(ts_prog)==false;     // invalid integer
+   test_input("$@", ts_prog->wds); VarName(ts_prog)==false;   // invalid variable
+
+Different combinations for testing a function:
+   test_input("SET $A := 1 ;", ts_prog->wds); assert(Set(ts_prog)==true);
+   test_input("SET $B := $A ;", ts_prog->wds); assert(Set(ts_prog)==true);
+   test_input("SET $B := $_ ;", ts_prog->wds); assert(Set(ts_prog)==false);
+   #ifdef INTERP
+   test_input("SET $B := $X ;", ts_prog->wds); assert(Set(ts_prog)==false);
+   #endif
+   test_input("SET $B := $A 1 B-LESS ;", ts_prog->wds); assert(Set(ts_prog)==true);
+   test_input("SET $B := $A 1 B-XXX ;", ts_prog->wds); assert(Set(ts_prog)==false);
+   #ifdef INTERP
+   test_input("SET $B := $A B-TIMES ;", ts_prog->wds); assert(Set(ts_prog)==false);
+   #endif
+   test_input("SET $B := 5 $A 2 B-TIMES U-NOT B-EQUALS ;", ts_prog->wds); assert(Set(ts_prog)==true);
+
+High-level: (false transfers to high-level functions)
+   test_input("SET $A := $ ;", ts_prog->wds); assert(InstrcList(ts_prog)==false);
+   test_input("BEGIN { SET $A := $ ; ONES 3 5 $C }", ts_prog->wds); assert(Prog(ts_prog)==false);
+
+
+4).   black-box testing from testers
+
+Testers can input test files. If it passes test, no error code/warning will be generated.
+
+   assert(open_file(ts_prog, "test.nlb")==true);
+   assert(Prog(ts_prog));
+
+
+5).   Error code generated while compiling input file
+
+As Users input files, if any error is found during both parse and interp phase,
+it will generate ERROR Info, to highlight the error position and its error code.
+
+EXAMPLE.file
+
+BEGIN {
+   SET xI := 5 ;         // invalid variable, xI
+}
+
+/*** ERROR Info ************************************/
+test.nlb, word 4: Error: invalid variable, expected to get variables (e.g. $A), occurred in nlab.c, line 441
+   SET xI :=
+       ^^
+at least 1 error generated in test.nlb
+/***************************************************/
+
+
+
+/ * * * Different Error Code * * * * * * * * * * * * * * * * * * * * * * /
+
+   test_input("1", ts_prog->wds); 
+   assert(Integer(ts_prog)==true);     // valid integer
+/*** No ERROR ************************************/
+
+   test_input(".", ts_prog->wds);
+   assert(Integer(ts_prog)==false);     // invalid integer
+/*** ERROR Info ************************************/
+test.prog, word 1: Error: invalid integer, expected integer (e.g. $A), occurred in nlab.c, line 658
+   . 
+   ^
+/***************************************************/
+
+   test_input("B@GIN { }", ts_prog->wds);
+   assert(Prog(ts_prog)==false);
+/*** ERROR Info ************************************/
+test.prog, word 1: Error: expected 'BEGIN' at the beginning of file, occurred in nlab.c, line 79
+   B@GIN {
+   ^^^^^
+/***************************************************/
+
+   test_input("BEGIN [ }", ts_prog->wds);
+   assert(Prog(ts_prog)==false);
+/*** ERROR Info ************************************/
+test.prog, word 2: Error: expected '{' after key word BEGIN, occurred in nlab.c, line 84
+   BEGIN [ }
+         ^
+/***************************************************/
+
+   test_input("BEGIN { ]", ts_prog->wds);
+   assert(Prog(ts_prog)==false);
+/*** ERROR Info ************************************/
+test.prog, word 3: Error: cannot find specific kw for INSTRC, occurred in nlab.c, line 160
+   { ] 
+     ^
+/***************************************************/
+
+   test_input("BEGIN { }", ts_prog->wds);
+   assert(Prog(ts_prog)==true);
+/*** No ERROR ************************************/
+
+
+   test_input("SET $A := 1 ;", ts_prog->wds);
+   assert(Set(ts_prog)==true);
+/*** No ERROR ************************************/
+
+   test_input("SET $B := $A ;", ts_prog->wds);
+   assert(Set(ts_prog)==true);
+/*** No ERROR ************************************/
+
+
+   test_input("SET $B := $_ ;", ts_prog->wds);
+   assert(Set(ts_prog)==false);
+/*** ERROR Info ************************************/
+test.prog, word 4: Error: invalid variable, expected to get variables (e.g. $A), occurred in nlab.c, line 636
+   := $_ ;
+      ^^
+/***************************************************/
+
+   #ifdef INTERP
+   test_input("SET $B := $X ;", ts_prog->wds);
+   assert(Set(ts_prog)==false);
+   #endif
+/*** ERROR Info ************************************/
+test.prog, word 4: Error: uninitialised variable, occurred in nlab.c, line 641
+   := $X ;
+      ^^
+/***************************************************/
+
+   test_input("SET $B := $A U-NOT ;", ts_prog->wds);
+   assert(Set(ts_prog)==true);
+/*** No ERROR ************************************/
+
+   test_input("SET $B := $A U-XXX ;", ts_prog->wds);
+   assert(Set(ts_prog)==false);
+/*** ERROR Info ************************************/
+test.prog, word 5: Error: invalid U-operation is found, occurred in nlab.c, line 571
+   $A U-XXX ;
+      ^^^^^
+/***************************************************/
+
+   test_input("SET $B := $A 1 B-LESS ;", ts_prog->wds);
+   assert(Set(ts_prog)==true);
+/*** No ERROR ************************************/
+
+   test_input("SET $B := $A 1 B-XXX ;", ts_prog->wds);
+   assert(Set(ts_prog)==false);
+/*** ERROR Info ************************************/
+test.prog, word 6: Error: invalid B-operation is found, occurred in nlab.c, line 610
+   1 B-XXX ;
+     ^^^^^
+/***************************************************/
+
+   #ifdef INTERP
+   test_input("SET $B := $A B-TIMES ;", ts_prog->wds);
+   assert(Set(ts_prog)==false);
+   #endif
+/*** ERROR Info ************************************/
+test.prog, word 5: Error: less variable/integer for B-operation (at least 2), occurred in nlab.c, line 616
+   $A B-TIMES ;
+      ^^^^^^^
+/***************************************************/
+
+   test_input("SET $B := 5 $A 2 B-TIMES U-NOT B-EQUALS ;", ts_prog->wds);
+   assert(Set(ts_prog)==true);
+/*** No ERROR ************************************/
+
+   test_input("1", ts_prog->wds);
+   assert(Integer(ts_prog)==true);
+/*** No ERROR ************************************/
+
+   test_input(".", ts_prog->wds);
+   assert(Integer(ts_prog)==false);
+/*** ERROR Info ************************************/
+test.prog, word 1: Error: invalid integer, expected integer (e.g. $A), occurred in nlab.c, line 658
+   . 
+   ^
+/***************************************************/
+
+   test_input("SET $A := $ ;", ts_prog->wds);
+   assert(InstrcList(ts_prog)==false);
+/*** ERROR Info ************************************/
+test.prog, word 4: Error: invalid variable, expected to get variables (e.g. $A), occurred in nlab.c, line 636
+   := $ ;
+      ^
+/***************************************************/
+
+   test_input("BEGIN { SET $A := 1 ; ONES 3 5 $C }", ts_prog->wds);
+   assert(Prog(ts_prog)==true);
+/*** No ERROR ************************************/
+
+
+
+test.nlb:
+
+# notes must be ignored
+# notes must be ignored
+BEGIN {
+   READ "lblock.arr" $A
+   ONES 4 4 $B
+   LOOP $I 2 {
+      SET $C := $B U-NOT 3 B-ADD $A B-TIMES ;
+      LOOP $J 2 {
+         SET $D := $C $B B-TIMES ;
+      }
+      PRINT "TEST:"
+      PRINT $D
+      SET $A := $D ;
+   }
+}
+
