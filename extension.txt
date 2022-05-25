@@ -1,0 +1,147 @@
+Extension includes these 5 items
+1). IF-ELSE statement
+2). Negative integers
+3). Other operations included 
+    (subtract, division, modulus, same & difference)
+4). Print sentence
+5). Hailstone with NLAB 
+    output a result after compiling :
+    => 11 gets the hailstone sequence, containing 15 numbers.
+
+
+1). IF-ELSE statement
+
+# Add another INSTRC as IFSTMT
+<INSTR> ::= <PRINT> | <SET> | <CREATE> | <LOOP> | <IFSTMT>
+
+# <IF>     : if statement
+# (<ELSE>) : optional, but only allowed after <IF>
+<IFSTMT> ::= <IF> (<ELSE>)
+
+# IF : if ( condition ) { statement } for if structure
+# As if-condition gets the result with 1 (meaning condition is true), if-statement will be followed.
+# IF if-condition is 0, if-statement will be skipped, then else-statement or other INSTRC will be followed.
+<IF> ::= "IF" <PUSHDOWN> <PUSHDOWN> <COMPAROP> "{" <INSTRCLIST>
+
+# ELSE : else { statement } for else structure
+<ELSE> ::= "ELSE" "{" <INSTRCLIST>
+
+# following Postfix notation, comparing two integers/variables
+# C-SAME : if two elements are the same, generate an 1 for result. If different, 0 for result.
+# C-DIFF : opposite to C-SAME
+<COMPAROP> ::= "C-SAME" | "C-DIFF"
+
+
+2). Negative integers
+
+Negetive integers are allowed in parser & interpreter, allowing to be stored, operated & printed
+For example,
+
+BEGIN {
+   SET $A := 0 ;
+   SET $A := $A -1 B-ADD ;
+   SET $A := $A 1 B-SUB ;
+   PRINT $A
+}
+
+~/12p4_NLAb$ ./extension test_ext1.nlb     // allowed in extension
+-2
+
+~/12p4_NLAb$ ./interp test_ext1.nlb        // rejected by parser in basic grammar
+/*** ERROR Info ************************************/
+test_ext1.nlb, word 12: Error: invalid integer, expected integer (e.g. 5), occurred in nlab.c, line 658
+   $A -1 B-ADD
+      ^^
+at least 1 error generated in test_ext1.nlb
+/***************************************************/
+
+
+3). Other operations
+
+All new operations follow Postfix notations.
+
+<BINARYOP> :: "B-SUB" | "B-DIV" | "B-MODULUS"
+<COMPAROP> ::= "C-SAME" | "C-DIFF"
+<POLISH> ::= <PUSHDOWN> | <UNARYOP> | <BINARYOP> | <COMPAROP>
+
+
+4). Print sentence
+
+The combination of several strings/variables are printed in the sentence format.
+For example,
+
+PRINT := $T "gets" "the" "hailstone" "sequence," "containing" $C "numbers." ;
+output => 11 gets the hailstone sequence, containing 15 numbers.
+
+<PRINT> ::= "PRINT" <VARNAME> | "PRINT" <STRING> | "PRINT" ":=" <SENTENCELIST>
+<SENTENCELIST> ::= <SENTENCE> <SENTENCELIST> | ";"
+<SENTENCE> ::= <VARNAME> | <STRING>
+
+
+5). Hailstone with NLAB 
+
+With all elements in NLab basic & extension, 
+it enables to find a Hailstone sequence & output the result.
+
+
+# Hailstones sequences are ones that seem to always return to 1. 
+# The number is halved if even, and if odd then the next becomes 3*n+1.
+# 11 gets the hailstone sequence, containing ??? numbers.
+
+BEGIN {
+
+   SET $T := 11 ;
+   SET $A := $T ;
+   SET $C := 1 ;
+
+   LOOP $L 2 {
+      SET $D := $A 2 B-MODULUS ;
+
+      IF $D 0 C-SAME {
+         SET $A := $A 2 B-DIV ;
+         SET $C := $C 1 B-ADD ;
+         SET $L := 1 ;
+      }
+      ELSE {
+         SET $A := $A 3 B-TIMES 1 B-ADD ;
+         SET $C := $C 1 B-ADD ;
+         SET $L := 1 ;
+      }
+      IF $A 1 C-SAME {
+         SET $L := 2 ;
+      }
+   }
+   
+   PRINT := $T "gets" "the" "hailstone" "sequence," "containing" $C "numbers." ;
+}
+
+
+/ * * * All Grammar for Extension * * * * * * * * * * * * * * * * * * * * * * /
+
+<PROG> ::== "BEGIN" { <INSTRCLIST>
+<INSTRCLIST> ::= "}" | <INSTR> <INSTRCLIST>
+<INSTR> ::= <PRINT> | <SET> | <CREATE> | <LOOP> | <IFSTMT>
+<PRINT> ::= "PRINT" <VARNAME> | "PRINT" <STRING> | "PRINT" ":=" <SENTENCELIST>
+<SENTENCELIST> ::= <SENTENCE> <SENTENCELIST> | ";"
+<SENTENCE> ::= <VARNAME> | <STRING>
+
+<SET> ::= "SET" <VARNAME> ":=" <POLISHLIST>
+<POLISHLIST> ::= <POLISH> <POLISHLIST> | ";"
+
+<POLISH> ::= <PUSHDOWN> | <UNARYOP> | <BINARYOP> | <COMPAROP>
+<PUSHDOWN> ::= <VARNAME> | <INTEGER>
+<UNARYOP> ::= "U-NOT" | "U-EIGHTCOUNT"
+<BINARYOP> :: "B-AND" | "B-OR" | "B-GREATER" | "B-LESS" | "B-ADD" | "B-TIMES" | "B-EQUALS"|
+              "B-SUB" | "B-DIV" |"B-MODULUS"
+<COMPAROP> ::= "C-SAME" | "C-DIFF"
+
+<CREATE> ::= "ONES" <ROWS> <COLS> <VARNAME> | "READ" <FILENAME> <VARNAME>
+<ROWS> ::= <INTEGER>
+<COLS> ::= <INTEGER>
+<FILENAME> ::= <STRING>
+
+<LOOP> ::= "LOOP" <VARNAME> <INTEGER> "{" <INSTRCLIST>
+
+<IFSTMT> ::= <IF> (<ELSE>)
+<IF> ::= "IF" <PUSHDOWN> <PUSHDOWN> <COMPAROP> "{" <INSTRCLIST>
+<ELSE> ::= "ELSE" "{" <INSTRCLIST>
