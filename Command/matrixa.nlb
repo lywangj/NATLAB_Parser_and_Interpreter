@@ -1,0 +1,9 @@
+BEGIN {
+   READ "lglider.arr" $A
+   LOOP $I 10 {
+      PRINT "ARRAY:"
+      PRINT $A
+      SET $B := $A U-NOT ;
+      SET $A := $B ;
+   }
+}
