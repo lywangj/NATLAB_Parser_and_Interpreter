@@ -6,14 +6,10 @@
 - setting variable with integer or matrix
 - read matrix from a file
 - handle operations for integer or matrix
-  - arithmetic operators
-    - add, times, sub, divide, modulus
-  - logical operators
-    - and, or
-  - relational operators
-    - equal, greater, less
-  - unit operators
-    - not, count 
+  - **arithmetic** operators: add, times, sub, divide, modulus
+  - **logical** operators: and, or
+  - **relational** operators: equal, greater, less
+  - unit operators: not, count 
 - if-else statement
 - loop
 - print-out integer, matrix & sentence
@@ -21,7 +17,7 @@
 ### Example
 #### case1. 
 
-#### case2. Hailstone
+#### case2. Hailstone sequence of a number
 
 ### Error Code Displayment for Exceptions
 
