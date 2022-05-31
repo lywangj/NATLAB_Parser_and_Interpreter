@@ -31,7 +31,7 @@
 ### Grammar Summary
 
 
-<PROG> ::== "BEGIN" { \<INSTRCLIST\>
+\<PROG\> ::== "BEGIN" { \<INSTRCLIST\>
   
   
 <INSTRCLIST> ::= "}" | <INSTR> <INSTRCLIST>
