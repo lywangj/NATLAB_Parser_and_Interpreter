@@ -44,44 +44,52 @@
 <SENTENCELIST> ::= <SENTENCE> <SENTENCELIST> | ";"
 <SENTENCE> ::= <VARNAME> | <STRING>
 ```
-
+  **Set**: 
 <SET> ::= "SET" <VARNAME> ":=" <POLISHLIST>
 <POLISHLIST> ::= <POLISH> <POLISHLIST> | ";"
 
 <POLISH> ::= <PUSHDOWN> | <UNARYOP> | <BINARYOP> | <COMPAROP>
 <PUSHDOWN> ::= <VARNAME> | <INTEGER>
   
-# following Postfix notation, comparing two integers/variables
-# C-SAME : if two elements are the same, generate an 1 for result. If different, 0 for result.
-# C-DIFF : opposite to C-SAME
-<COMPAROP> ::= "C-SAME" | "C-DIFF"
+following Postfix notation, comparing two integers/variables
+- C-SAME : if two elements are the same, generate an 1 for result. If different, 0 for result.
+- C-DIFF : opposite to C-SAME
   
+```
+<COMPAROP> ::= "C-SAME" | "C-DIFF"
 <UNARYOP> ::= "U-NOT" | "U-EIGHTCOUNT"
 <BINARYOP> :: "B-AND" | "B-OR" | "B-GREATER" | "B-LESS" | "B-ADD" | "B-TIMES" | "B-EQUALS"|
               "B-SUB" | "B-DIV" |"B-MODULUS"
 <COMPAROP> ::= "C-SAME" | "C-DIFF"
-
+```
+  
+  **Create**: 
+  
+```
 <CREATE> ::= "ONES" <ROWS> <COLS> <VARNAME> | "READ" <FILENAME> <VARNAME>
 <ROWS> ::= <INTEGER>
 <COLS> ::= <INTEGER>
 <FILENAME> ::= <STRING>
-
-<LOOP> ::= "LOOP" <VARNAME> <INTEGER> "{" <INSTRCLIST>
-
-<IFSTMT> ::= <IF> (<ELSE>)
-<IF> ::= "IF" <PUSHDOWN> <PUSHDOWN> <COMPAROP> "{" <INSTRCLIST>
-<ELSE> ::= "ELSE" "{" <INSTRCLIST>
+```
   
-# <IF>     : if statement
-# (<ELSE>) : optional, but only allowed after <IF>
+  **Loop**: 
+  
+```
+<LOOP> ::= "LOOP" <VARNAME> <INTEGER> "{" <INSTRCLIST>
+```
+  
+  **If-else**: 
+  - <IF>     : if statement
+  - (<ELSE>) : optional, but only allowed after <IF>
+  - IF : if ( condition ) { statement } for if structure
+  - ELSE : else { statement } for else structure
+As if-condition gets the result with 1 (meaning condition is true), if-statement will be followed.
+IF if-condition is 0, if-statement will be skipped, then else-statement or other INSTRC will be followed.
+  
+```
 <IFSTMT> ::= <IF> (<ELSE>)
-
-# IF : if ( condition ) { statement } for if structure
-# As if-condition gets the result with 1 (meaning condition is true), if-statement will be followed.
-# IF if-condition is 0, if-statement will be skipped, then else-statement or other INSTRC will be followed.
 <IF> ::= "IF" <PUSHDOWN> <PUSHDOWN> <COMPAROP> "{" <INSTRCLIST>
-
-# ELSE : else { statement } for else structure
 <ELSE> ::= "ELSE" "{" <INSTRCLIST>
+```
 
 
