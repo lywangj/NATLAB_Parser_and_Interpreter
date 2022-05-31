@@ -45,12 +45,15 @@
 <SENTENCE> ::= <VARNAME> | <STRING>
 ```
   **Set**: 
+  
+```  
 <SET> ::= "SET" <VARNAME> ":=" <POLISHLIST>
 <POLISHLIST> ::= <POLISH> <POLISHLIST> | ";"
 
 <POLISH> ::= <PUSHDOWN> | <UNARYOP> | <BINARYOP> | <COMPAROP>
 <PUSHDOWN> ::= <VARNAME> | <INTEGER>
-  
+```
+
 following Postfix notation, comparing two integers/variables
 - C-SAME : if two elements are the same, generate an 1 for result. If different, 0 for result.
 - C-DIFF : opposite to C-SAME
