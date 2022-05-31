@@ -29,7 +29,11 @@
 4. black-box testing from testers                 // test_file()
 
 ### Grammar Summary
-<PROG> ::== "BEGIN" { <INSTRCLIST>
+
+
+<PROG> ::== "BEGIN" { \<INSTRCLIST\>
+  
+  
 <INSTRCLIST> ::= "}" | <INSTR> <INSTRCLIST>
 <INSTR> ::= <PRINT> | <SET> | <CREATE> | <LOOP> | <IFSTMT>
 <PRINT> ::= "PRINT" <VARNAME> | "PRINT" <STRING> | "PRINT" ":=" <SENTENCELIST>
