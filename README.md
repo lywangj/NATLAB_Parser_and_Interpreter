@@ -16,6 +16,17 @@
 
 ### Example
 #### case1. 
+In a simple case, set an integer **5** in a variable **$I**, then print out the variable.
+```
+BEGIN {
+   SET $I := 5 ;
+   PRINT $I
+}
+```
+Output:
+```
+5
+```
 
 #### case2. Hailstone sequence of a number
 
