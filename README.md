@@ -12,8 +12,8 @@ Develop programming language allowing Matrix-manipulation, written in C
 - if-else statement
 - loop
 - print-out integer, matrix & sentence
-
-### Example
+#
+### Examples
 #### case1. 
 In a simple case, set an integer **5** in a variable **$I**, then print out the variable.
 ```
@@ -26,8 +26,37 @@ BEGIN {
 ```
 5
 ```
+#### case2. Matrix operating
+For this programming language, user is able to generate a new matrix with instructions or store a matrix into a variable by reading it from files. In this case, a matrix from file **lglider.arr** is stored in the variable **$A**. Next, in 10-cycle loop, this input matrix will be operated by **U-NOT**, which turns **0** to **1** and turn others to **0**.
+```
+BEGIN {
+   READ "lglider.arr" $A
+   LOOP $I 10 {
+      PRINT "ARRAY:"
+      PRINT $A
+      SET $A := $A U-NOT ;
+   }
+}
+```
+**Output:**
+```
+ARRAY:
+0 0 0 0 0 
+0 0 0 0 0 
+0 1 1 1 0 
+0 0 0 0 0 
+0 0 0 0 0 
+...
+ARRAY:
+1 1 1 1 1 
+1 1 1 1 1 
+1 0 0 0 1 
+1 1 1 1 1 
+1 1 1 1 1 
+... (10 arrays printed out in total)
+```
 
-#### case2. Hailstone sequence of a number
+#### case3. Hailstone sequence of a number
 In the main structure, the first part is to setup the targeted number (in this case, it is **11**), its reference **$A** and the counter for the length of sequence **$C**. The second part is for a while-loop to generate the sequence. This loop will keep operating, until number **1** is found, and then the loop will be ended. The final part is for printing out a final result.
 
 ```
@@ -102,6 +131,21 @@ Find the hailstone sequence of 11
 
 #
 ### Error Code Displayment for Exceptions
+As Users input files, if any error is found during both parse and interp phase, it will generate ERROR Info, to highlight the error position and its error code.
+
+- EXAMPLE.file
+```
+BEGIN {
+   SET xI := 5 ;         // invalid variable, xI
+}
+```
+**Generate error code:**
+```
+test.nlb, word 4: Error: invalid variable, expected to get variables (e.g. $A), occurred in nlab.c, line 441
+   SET xI :=
+       ^^
+at least 1 error generated in test.nlb
+```
 
 #
 ### Verifying Methodology
