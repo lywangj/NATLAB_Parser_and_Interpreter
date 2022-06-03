@@ -1,6 +1,5 @@
 # NATLAB
-- Develop programming language allowing Matrix-manipulation, written in C
-- 
+Develop programming language allowing Matrix-manipulation, written in C
 
 ### Manipulations
 - setting variable with integer or matrix
@@ -23,22 +22,95 @@ BEGIN {
    PRINT $I
 }
 ```
-Output:
+**Output:**
 ```
 5
 ```
 
 #### case2. Hailstone sequence of a number
+In the main structure, the first part is to setup the targeted number (in this case, it is **11**), its reference **$A** and the counter for the length of sequence **$C**. The second part is for a while-loop to generate the sequence. This loop will keep operating, until number **1** is found, and then the loop will be ended. The final part is for printing out a final result.
 
+```
+BEGIN {
+   // initially set up, the targeted number is "11"
+   SET $T := 11 ;
+   SET $A := $T ;
+   SET $C := 1 ;
+   PRINT := "Find" "the" "hailstone" "sequence" "of" $T ;
+   PRINT $T
+
+   LOOP $L 2 {
+      // generate Hailstone sequence
+      ...
+      
+      // print out the number in each round
+      PRINT $A      
+      
+      // Loop will be ended when Hailstone seq reach number "1"
+      IF $A 1 C-SAME {
+         SET $L := 2 ;
+      }
+   }
+   // print out the final result
+   PRINT := $T "gets" "the" "hailstone" "sequence," "containing" $C "numbers." ;
+}
+```
+Within the loop, the fist step is to check the number in each round is even or odd. If the number is even, the number will be diveded by 2, or, if the number is odd, the number will be timed by 3 and then added 1. The result will pass to next round in loop.
+
+```
+   ... // initially set up
+   LOOP $L 2 {
+      // check the number is even
+      SET $D := $A 2 B-MODULUS ;
+
+      // if the number is even
+      IF $D 0 C-SAME {
+         SET $A := $A 2 B-DIV ;
+         SET $C := $C 1 B-ADD ;
+         SET $L := 1 ;
+      }
+      // if the number is odd
+      ELSE {
+         SET $A := $A 3 B-TIMES 1 B-ADD ;
+         SET $C := $C 1 B-ADD ;
+         SET $L := 1 ;
+      }
+      ...
+   }
+   ... // print out the final result
+```
+**Output:**
+```
+Find the hailstone sequence of 11 
+11 
+34 
+17 
+52 
+26 
+13 
+40 
+20 
+10 
+5 
+16 
+8 
+4 
+2 
+1 
+11 gets the hailstone sequence, containing 15 numbers. 
+```
+
+#
 ### Error Code Displayment for Exceptions
 
-
+#
 ### Verifying Methodology
 1. unit testing for general functions             // test_func()
 2. white-box testing for stack functions          // test_stack()
 3. white-box testing for programming functions    // test_prog() & test_prog_ext()
 4. black-box testing from testers                 // test_file()
 
+#
 ### Grammar Summary
   In this programming language, there is a title at the beginning of our instructions. Following this, all the instructions must be within a pair of curly brackets.
 ```
