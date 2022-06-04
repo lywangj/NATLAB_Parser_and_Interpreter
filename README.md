@@ -84,7 +84,7 @@ BEGIN {
    PRINT := $T "gets" "the" "hailstone" "sequence," "containing" $C "numbers." ;
 }
 ```
-Within the loop, the fist step is to check the number in each round is even or odd. If the number is even, the number will be diveded by 2, or, if the number is odd, the number will be timed by 3 and then added 1. The result will pass to next round in loop.
+Within the loop, the fist step is to check the number in each round is **even** or **odd**. If the number is even, the number will be **diveded by 2**, or, if the number is odd, the number will be **timed by 3** and then **added 1**. The result will pass to next round in loop.
 
 ```
    ... // initially set up
